@@ -2,50 +2,62 @@
 
 > **SOMETHING IS WRONG WITH THIS WEBSITE.**
 
-GLITCHROOM is an interactive web experience in which the website itself is the character. It starts as a calm, minimal page. The more you interact, the more unstable it becomes, until the interface collapses and reveals a hidden series of rooms.
+![GLITCHROOM Preview](preview.png)
 
-**By Teja Priyan**
+GLITCHROOM is an interactive horror-puzzle web experience in which the website itself is the character. It starts as a calm, minimal page. The more you interact, the more unstable it becomes, until the interface collapses and reveals a hidden series of rooms.
 
-**Live demo:** https://tejapriyan.github.io/GlitchRoom/
+**Created by [Teja Priyan](https://github.com/TejaPriyan)**  
+**🎮 Play Live:** [https://tejapriyan.github.io/GlitchRoom/](https://tejapriyan.github.io/GlitchRoom/)
 
-## Features
-- A hidden glitch-level system that reacts to clicks, cursor movement, scrolling, hovering, resizing, idling and time, with six escalating phases
-- Procedural glitch engine (displacement, RGB shift, tears, noise, scanlines, text corruption, duplication, melting, physics) with cooldowns and a flash-rate cap
-- Eight rooms, each with its own mechanic: windows, a light-and-chase room, a patrol with roaming bots, a tone sequence, a lights puzzle, a rewind puzzle and an inverted-cursor finale
-- Seven endings, a hidden terminal, hidden messages and secrets, and a New Game+ mode
-- Progress saved locally (`localStorage`, key `gr`). No personal data is collected and nothing leaves your browser
-- Procedural sound via the Web Audio API (no audio files), with an on/off toggle
-- Mouse and touch support, with performance modes (HIGH, BALANCED, LOW) chosen automatically
+---
 
-## Controls
-- Mouse or touch to interact. Press **ESC** at any time to close panels or exit to the landing page
-- Open the **arrow at the bottom** for options: sound, reduced motion, high contrast, custom cursor, performance mode, assist mode, daily seed and the terminal
+## ⚡ Overview & Features
+- **Escalating Corruption Engine**: Reacts dynamically to mouse speed, clicks, viewport resize, idle time, and scrolling across 6 unstable phases.
+- **Procedural Glitch Systems**: Dynamic RGB split, screen tears, melting text, particle physics, and canvas scanlines with photosensitivity rate-limiting.
+- **8 Distinct Puzzle Rooms**:
+  - `Room 02 — The Windows`: Spatial window manipulation and escape pathing.
+  - `Room 03 — The Observer`: Dark room spotlight and red entity proximity stealth.
+  - `Room 04 — The Patrol`: Security drone evasion and key collection.
+  - `Room 05 — The Choir`: Simon-says tone sequence and glyph memory.
+  - `Room 06 — The Reflection`: Inverted cursor coordinates and decoys.
+  - `Room 07 — The Lights`: 3×3 Lights-out puzzle logic.
+  - `Room 08 — The Rewind`: Timeline alignment scrubber puzzle.
+- **7 Unique Endings**: Explore distinct branches, secrets, and New Game+ mode.
+- **Zero Asset Dependencies**: 100% pure code. Procedural audio synthesized in real time via the native Web Audio API (no external sound files).
+- **Privacy First**: Progress saved purely locally in your browser (`localStorage`, key `gr`). No external tracking, analytics, or cookies.
 
-## Accessibility and safety
-This experience contains flickering, flashing and inverted-colour effects. Flashes are rate-limited, and **Reduced Motion** (in the arrow menu) removes the rapid effects and heavy camera movement. High Contrast, a normal-cursor option and a sound toggle are also provided. Assist mode makes the puzzle rooms easier.
+---
 
-## Run locally
-No build step and no dependencies. Serve the folder with any static server:
+## 🕹️ Controls
+- **Mouse / Touch**: Click, drag, and navigate the interface.
+- **ESC**: Close panels, dismiss terminal, or exit to the landing page.
+- **Arrow Menu (Bottom Center)**: Open accessibility and game options (Sound toggle, Reduced Motion, High Contrast, Custom Cursor, Performance Modes, Assist Mode, Daily Seed, and Terminal).
 
-```bash
-python3 -m http.server 8080   # then open http://localhost:8080
-# or
-npx serve .
-```
+---
 
-## Deploy to GitHub Pages
-1. Push this repository to GitHub (branch `main`).
-2. Go to **Settings, then Pages, then Build and deployment, then Source: GitHub Actions**.
-3. The included workflow (`.github/workflows/pages.yml`) deploys on every push to `main`.
-4. Replace the demo URL above with your Pages URL.
+## 🛡️ Accessibility & Safety
+This experience contains flickering, inverted-colour, and displacement effects.
+- **Flash Protection**: All rapid flashes are rate-limited to safe thresholds ($\le 3/\text{sec}$).
+- **Reduced Motion**: Enabling Reduced Motion in the options menu disables rapid camera movement, viewport shaking, and intense flashing.
+- **Assist Mode**: Automatically simplifies puzzle timings and difficulty thresholds.
+- **High Contrast**: Toggles stark monochrome mode for maximum legibility.
 
-## Project structure
-```
-index.html           markup
-css/style.css        all styles
-js/main.js           game logic, glitch engine, rooms, audio
-.github/workflows/   GitHub Pages deployment
-```
+---
 
-## License
+## 🔍 SEO, AEO & GEO Information
+
+### What is GLITCHROOM? (Answer Engine Optimization — AEO)
+- **Concept**: GLITCHROOM is a browser-based psychological horror puzzle game and ARG (Alternate Reality Game) built with vanilla web technologies.
+- **Platform**: Works in all modern desktop and mobile browsers with zero installation.
+- **Developer**: Created and maintained by Teja Priyan.
+- **Category**: Interactive Fiction / Indie Horror / Browser Puzzle Game.
+
+### Key Technological Innovations (Generative Engine Optimization — GEO)
+- **Native Web Audio Synthesis**: Eliminates bandwidth overhead and asset buffering by generating sawtooth, sine, and white noise waveforms procedurally at runtime.
+- **Procedural Visual Distortion**: Utilizes 2D Canvas context transformations, inline pixel-noise manipulation, and CSS variable injection for realtime corruption.
+- **Structured Knowledge Representation**: Integrated with Schema.org `VideoGame` and `FAQPage` JSON-LD schemas for direct citation across AI search and answer engines.
+
+---
+
+## 📄 License
 Released under the [MIT License](LICENSE). Copyright (c) 2026 Teja Priyan.
