@@ -33,7 +33,7 @@ button:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
 #mi u{display:none;text-decoration:none}#mi:hover u,#mi:focus u{display:inline}#mi:hover i,#mi:focus i{display:none}
 #mi,#panel [data-x]{padding:.1em .6em}
 #say,#flash{position:fixed;z-index:40;pointer-events:none;font:700 clamp(18px,4.5vw,52px)/1.1 "Helvetica Neue",Arial,sans-serif;color:#fff;mix-blend-mode:difference;display:none}
-#say{left:50%;bottom:22vh;translate:-50% 0;text-align:center;width:max-content;max-width:90vw}
+#say{left:50%;top:clamp(40px,9vh,80px);translate:-50% 0;text-align:center;width:max-content;max-width:90vw}
 #flash{font-size:clamp(14px,3vw,30px)}
 #door{position:fixed;width:10px;height:16px;padding:0;border:1px solid var(--fg);background:var(--bg);z-index:45;letter-spacing:0}
 #door::after{content:"";position:absolute;inset:-14px}

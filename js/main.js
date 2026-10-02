@@ -8,7 +8,7 @@ const coarse=matchMedia('(pointer:coarse)').matches,dk=matchMedia('(prefers-colo
 const O=S.opt;O.rm??=matchMedia('(prefers-reduced-motion:reduce)').matches;O.hc??=0;O.cu??=1;O.snd??=1;O.pf??=(coarse||cores<=4)?(cores<=2?'LOW':'BALANCED'):'HIGH';
 const PC={HIGH:[22,280,2],BALANCED:[12,140,4],LOW:[5,50,8]};
 const cam=$('#cam'),land=$('#land'),rm=$('#rm'),r2=$('#r2'),r4=$('#r4'),r5=$('#r5'),r6=$('#r6'),panel=$('#panel'),sayE=$('#say'),flE=$('#flash'),door=$('#door'),fin=$('#fin'),cur=$('#cur'),cur2=$('#cur2'),fx=$('#fx'),nz=$('#nz'),sc=$('#sc'),bar=$('#bar'),btBtn=$('#bt');
-let lv=M.min(S.lv,85),room=0,now=0,lock=0,col=0,mir=0,mx=innerWidth/2,my=innerHeight/2,lastIn=0,hideC=0,frz=0,sy=0,off=0,dm=0,doorCd=0,thr=10000+R()*8000,idleT=0,ghost=0,cdup=0,resetDone=0,lk=-1,bgc='#f6f6f4',fgc='#0b0b0b',init=1;
+let lv=M.min(S.lv,85),room=0,now=0,lock=0,col=0,mir=0,mx=innerWidth/2,my=innerHeight/2,lastIn=0,hideC=0,frz=0,sy=0,off=0,dm=0,doorCd=0,thr=10000+R()*8000,idleT=0,ghost=0,cdup=0,resetDone=0,lk=-1,bgc='#f6f6f4',fgc='#0b0b0b',init=1,r2Solved=0;
 const ph=()=>lock?0:lv<12?0:lv<30?1:lv<48?2:lv<66?3:lv<100?4:5;
 const find=k=>{if(/^r\d$/.test(k))S.pg=M.max(S.pg||0,ORD.indexOf(+k[1])+1);if(!S.found.includes(k)){S.found.push(k);sv()}};
 /* physics items */
@@ -107,9 +107,10 @@ function exit(msg){const B0=BH;BH={clk:0,idle:0,obey:0};stopT=0;term.hidden=1;en
 let WO=[];
 const WD=[['MEMO','NOBODY WROTE THIS','r'],['DOOR?','NOT THIS ONE','f'],['NOTHING','','n'],['▲ ▲ ▲','⌬ ⍜ ◬','r'],['OBSERVER','STOP LOOKING AT ME','h'],['FILE_000','████ ██ ████','n'],['YOU','YOU','r']];
 function mkWin(t,b,tp,i){const e=document.createElement('div');e.className='win';e.innerHTML=`<div class=wt>${t}</div><div class=wb>${b||'&nbsp;'}</div>`;e.style.left=R()*M.max(10,innerWidth-200)+'px';e.style.top=innerHeight*.28+R()*innerHeight*.5+'px';r2.append(e);const o={e,x:0,y:0,tp,i,hit:0,d:0};WO.push(o);return o}
-function goR2(){if(room==2)return;room=2;col=0;S.room=2;find('r2');[door,fin,rm,panel].forEach(e=>e.hidden=1);r2.hidden=0;sfx('door');tc(2);WO.forEach(o=>o.e.remove());WO=[];$('#r2t')?.remove();
- const h=document.createElement('h1');h.id='r2t';h.innerHTML=[...'ROOM 02'].map((c,i)=>`<span style="animation-delay:${-i*.5}s">${c==' '?'&nbsp;':i==5?'◬':c}</span>`).join('');r2.append(h);WD.forEach((w,i)=>mkWin(...w,i));repair(mkWin('REPAIR','','g',7))}
-function touch(o){if(o.hit)return;o.hit=1;if(WO.filter(w=>w.hit).length>=3&&!WO.some(w=>w.tp=='x')){const w=mkWin('WAY OUT','LEAVE',' x'.trim(),9);w.e.dataset.x=1;w.e.style.left='calc(50% - 75px)';w.e.style.top='58%';w.e.style.borderColor='var(--ac)'}}
+function goR2(){if(room==2)return;room=2;col=0;S.room=2;find('r2');[door,fin,rm,panel].forEach(e=>e.hidden=1);r2.hidden=0;sfx('door');tc(2);WO.forEach(o=>o.e.remove());WO=[];$('#r2t')?.remove();r2Solved=0;
+ const h=document.createElement('h1');h.id='r2t';h.innerHTML=[...'ROOM 02'].map((c,i)=>`<span style="animation-delay:${-i*.5}s">${c==' '?'&nbsp;':i==5?'◬':c}</span>`).join('');r2.append(h);WD.forEach((w,i)=>mkWin(...w,i));repair(mkWin('REPAIR','','g',7));
+ say('ANOMALIES DETECTED. SOLVE "REPAIR" AND INTERACT WITH WINDOWS.',3800)}
+function touch(o){if(o.hit)return;o.hit=1;const hitCount=WO.filter(w=>w.hit).length;if(hitCount<6)say(`ANOMALIES FOUND: ${hitCount}/6`,1200);if(hitCount>=6&&r2Solved&&!WO.some(w=>w.tp=='x')){const w=mkWin('WAY OUT','LEAVE',' x'.trim(),9);w.e.dataset.x=1;w.e.style.left='calc(50% - 75px)';w.e.style.top='58%';w.e.style.borderColor='var(--ac)';say('WAY OUT UNLOCKED.',2400)}}
 /* input */
 let drag=0,lp=0,px=0,py=0,lpt=0;
 addEventListener('pointermove',e=>{const d=M.hypot(e.clientX-mx,e.clientY-my);if(room>=3&&d>3)lmv=now;if(e.pointerType=='touch'&&!drag)sy+=(e.clientY-my)*2;mx=e.clientX;my=e.clientY;lastIn=now;if(room==1){add(d*.004);if(d>50&&ph()>=4&&!O.rm)HO.push({x:mx,y:my,r:10+Math.random()*20,e:now+900});if(d>60&&ph()>=1&&Math.random()<.2)sfx('click')}
@@ -133,8 +134,28 @@ function rcl(el){if(el==rcI&&now-rcT<1600)rcN++;else{rcI=el;rcN=1}rcT=now;const 
 const GO=['YOU ARE ALREADY IN THE ROOM','WELCOME BACK','NOBODY IS HERE','WELCOME'];let gi=0;
 document.addEventListener('click',e=>{const b=e.target.closest('button'),w=e.target.closest('.win');
  if(w&&w.dataset.x){{const n=ending();exit(`YOU ESCAPED. ENDING: ${n} (${S.end.length}/7)`)}return}
- if(w){const o=WO.find(o=>o.e==w);if(o.tp=='n'&&(o.c=(o.c||0)+1)>=3)w.querySelector('.wb').textContent='I TOLD YOU';if(o.i==6&&(o.k=(o.k||0)+1)>=3){w.querySelector('.wb').textContent='LOOK BEHIND YOU';setTimeout(goR3,1400);return}
- if(o.tp=='r'){const wb=w.querySelector('.wb');wb.textContent=[...wb.textContent].map(c=>Math.random()<.4?rn(CH):c).join('')}sfx('gl')}
+ if(w){const o=WO.find(o=>o.e==w);if(o){
+  touch(o);
+  if(o.tp=='f'){w.querySelector('.wb').textContent='LOCKED.';sfx('gl')}
+  if(o.tp=='h'){w.querySelector('.wb').textContent='IT WATCHES YOU.';sfx('gl')}
+  if(o.tp=='n'&&(o.c=(o.c||0)+1)>=3)w.querySelector('.wb').textContent='I TOLD YOU';
+  if(o.i==6){
+   o.k=(o.k||0)+1;sfx('gl');
+   if(!r2Solved){
+    w.querySelector('.wb').textContent='RESTORE ORDER FIRST.';
+    say('SOLVE "REPAIR" WINDOW FIRST TO UNLOCK THIS ANOMALY.',2800);
+    o.x=(R()-.5)*(innerWidth-220);o.y=(R()-.5)*(innerHeight-220);
+    return}
+   if(o.k<4){
+    const rep=['WHO IS THIS?','NOT YOU.','STOP CHASING ME.'];
+    w.querySelector('.wb').textContent=rep[o.k-1]||'NOT YOU.';
+    o.x=(R()-.5)*(innerWidth-220);o.y=(R()-.5)*(innerHeight-220);
+    say(`CONFRONTING "YOU" (${o.k}/4)`,1400);tear();
+    return}
+   w.querySelector('.wb').textContent='LOOK BEHIND YOU.';
+   say('ANOMALY COLLAPSED. LOOK BEHIND YOU.',2600);
+   setTimeout(goR3,2200);return}
+  if(o.tp=='r'){const wb=w.querySelector('.wb');wb.textContent=[...wb.textContent].map(c=>Math.random()<.4?rn(CH):c).join('')}sfx('gl')}}
  if(!b)return;if(dm){dm=0;return}au();sfx('click');const id=b.id;
  if(b.closest('#rm')&&room==1&&!lock)rcl(b);
  if(id=='in'){ngp=(S.end||[]).length>=5?1:0;$('#card').hidden=1;T0=performance.now();if(O.dy)sd=[...new Date().toDateString()].reduce((a,c)=>a*31+c.charCodeAt(0)|0,7);sfx('enter');land.style.transition='opacity .8s';land.style.opacity=0;setTimeout(()=>{land.hidden=1;rm.hidden=0;room=1;lastIn=now;stat();
@@ -219,15 +240,16 @@ let ob={x:0,y:0},t3=0,stT=0,lmv=0,end3=0,away=0,hb=0,hint3=0,nr3=0;
 const endAdd=n=>{S.end=S.end||[];if(!S.end.includes(n)){S.end.push(n);sv()}return n};
 function goR3(){if(room==3)return;room=3;find('r3');[door,fin,rm,r2,r4,r5,r6,r7,r8,nx,botE,bot2E,panel].forEach(e=>e.hidden=1);hideC=0;r3.hidden=0;sfx('door');end3=away=stT=nr3=hint3=0;for(const e of eyesE.children){e._d=0;e.style.opacity=''}t3=lmv=now;ob.x=mx>innerWidth/2?-60:innerWidth+60;ob.y=my>innerHeight/2?-60:innerHeight+60;
  if(!eyesE.children.length)for(let i=0;i<14;i++){const e=document.createElement('div');e.className='e3';e._x=R()*.94;e._y=R()*.9;e.style.left=e._x*100+'vw';e.style.top=e._y*100+'vh';e.style.animationDelay=-R()*5+'s';e.innerHTML='<b></b>';eyesE.append(e)}
- tc(3)}
+ tc(3);say("A PREDATOR TRACKS YOU. DON'T MOVE WHEN IT IS NEAR.",3800)}
 function r3f(t){cam.style.transform='';const W=innerWidth,H=innerHeight,dt=M.min(3,(t-(r3f.l||t))/16.7);r3f.l=t;
- let dx=mx-ob.x,dy=my-ob.y,d=M.hypot(dx,dy)||1;const mv=t-lmv<250;
+ let dx=mx-ob.x,dy=my-ob.y,d=M.hypot(dx,dy)||1;const mv=t-lmv<250,grace=t-t3<3200;
  if(end3){if(away){ob.x+=(ob.x<W/2?-7:7)*dt}}
- else{if(mv){const sp=(1.1+(t-t3)/40000)*dt*(coarse?.75:1);ob.x+=dx/d*sp;ob.y+=dy/d*sp;stT=0}else if(d<520&&t-t3>5000)stT+=dt*16.7;
+ else if(grace){ob.x+=(W/2-ob.x)*.008*dt;ob.y+=(H/2-ob.y)*.008*dt}
+ else{if(mv){const sp=(2.6+(t-t3)/22000)*dt*(coarse?.75:1);ob.x+=dx/d*sp;ob.y+=dy/d*sp;stT=0}else if(d<540&&t-t3>3500)stT+=dt*16.7;
   if(t>hb){sfx('beat');if(coarse&&d<250&&!O.rm&&navigator.vibrate)navigator.vibrate(20);hb=t+cl(d*1.3,260,1200)}
-  if(!hint3&&t-t3>14000){hint3=1;say('WHEN YOU STOP, IT STOPS.',3500)}
-  if(!nr3&&d<320){nr3=1;say("DON'T MOVE.",2200)}
-  if(d<38)catch3();else if(stT>=(O.ez?4000:6500))win3()}
+  if(!hint3&&t-t3>12000){hint3=1;say('WHEN YOU STOP, IT STOPS.',3500)}
+  if(!nr3&&d<340&&!grace){nr3=1;say("DON'T MOVE. IT IS NEAR.",2200)}
+  if(d<68&&!grace)catch3();else if(stT>=(O.ez?4200:6500))win3()}
  dkE.style.setProperty('--cx',mx+'px');dkE.style.setProperty('--cy',my+'px');dkE.style.setProperty('--vr',cl(50+d*.25,60,220)+'px');
  obE.style.translate=`${ob.x-32}px ${ob.y-10}px`;obE.style.scale=O.rm?1:1+cl(1-d/700,0,1)*2.2;
  let i=0;for(const e of eyesE.children){const ex=e._x*W+15,ey=e._y*H+8,a=M.atan2(my-ey,mx-ex);e.firstChild.style.translate=`${M.cos(a)*7}px ${M.sin(a)*3}px`;if(!e._d&&M.hypot(mx-ex,my-ey)<26){e._d=1;e.style.opacity=.2;say(EM[i%8],2200);find('eye')}i++}}
@@ -243,26 +265,33 @@ const ctxE=$('#ctx');ctxE.onclick=()=>{ctxE.hidden=1;say(rn(['NO.','THERE IS NO 
 document.addEventListener('contextmenu',e=>{if(!room||ph()<2)return;e.preventDefault();ctxE.innerHTML=['BACK','RELOAD','INSPECT','LEAVE'].map(x=>`<div>${[...x].map(c=>Math.random()<.3?rn(CH):c).join('')}</div>`).join('');ctxE.style.left=M.min(e.clientX,innerWidth-150)+'px';ctxE.style.top=M.min(e.clientY,innerHeight-130)+'px';ctxE.hidden=0;setTimeout(()=>ctxE.hidden=1,2500);add(2)});
 addEventListener('deviceorientation',e=>{tx=cl((e.gamma||0)/45,-1,1);ty=cl((e.beta||0)-45,-45,45)/45});
 function repair(o){const w='RESTORE',sh=[...w].sort(()=>R()-.5),b=o.e.querySelector('.wb');let n=0;b.innerHTML='RESTORE ORDER:<br>'+sh.map(c=>`<button class=rp>${c}</button>`).join(' ');
- b.onclick=e=>{const t=e.target.closest('.rp');if(!t||t.disabled)return;if(t.textContent==w[n]){t.disabled=true;t.style.opacity=.3;if(++n==w.length){b.textContent='REPAIRED. IT COST YOU SOMETHING.';find('repair');setMir(1);setTimeout(()=>mir=0,20000);say('LOOK BEHIND YOU.',2000);setTimeout(goR3,2200)}}else{n=0;b.querySelectorAll('.rp').forEach(x=>{x.disabled=false;x.style.opacity=1})}}}
+ b.onclick=e=>{const t=e.target.closest('.rp');if(!t||t.disabled)return;if(t.textContent==w[n]){t.disabled=true;t.style.opacity=.3;if(++n==w.length){b.textContent='REPAIRED. ORDER RESTORED.';find('repair');r2Solved=1;touch(o);sfx('gl');say('ORDER RESTORED. NOW CONFRONT THE "YOU" ANOMALY.',3200)}}else{n=0;b.querySelectorAll('.rp').forEach(x=>{x.disabled=false;x.style.opacity=1})}}}
 /* rooms 4-6 */
 const botE=$('#bot'),bot2E=botE.cloneNode(true);bot2E.id='bot2';bot2E.hidden=1;document.body.append(bot2E);const nx=$('#nx'),k4=$('#k4'),p5=$('#p5'),c6=$('#c6');
 let bt2={x:0,y:0,wx:0,wy:0,cd:0,hit(){}},k4j=0,bt={x:0,y:0,wx:0,wy:0,cd:0,hit(){}},k4n=0,sq=[],pi=0,busy=0,tg=[];
-function stage(n){room=n;find('r'+n);[door,fin,rm,r2,r3,r4,r5,r6,r7,r8,panel,nx].forEach(e=>e.hidden=1);$('#r'+n).hidden=0;sfx('door');tc(n);botE.hidden=n!=4&&n!=6;bot2E.hidden=n!=4;k4j=now+6000;botE.style.scale=n==6?2.2:1;if(ap){ap.forEach((q,i)=>q.frequency.setTargetAtTime([110,165,220][i]*[1,1,1,1,.8,1.25,.6,.9,1.1][n],ac.currentTime,.5));pg.gain.setTargetAtTime(O.snd?.02:0,ac.currentTime,1)}hideC=n==6?1e12:0;lmv=now;bt={x:-40,y:innerHeight/2,wx:300,wy:300,cd:now+2500,hit(){}};bt2={x:innerWidth+40,y:innerHeight/2,wx:innerWidth-300,wy:300,cd:now+3500,hit(){bt.hit()}}}
-function botStep(dt,t,b,e,fast){b=b||bt;e=e||botE;if(room==4&&cg4)return;const tx=room==6?innerWidth-mx:mx,ty=room==6?innerHeight-my:my,d=M.hypot(tx-b.x,ty-b.y),still=t-lmv>(room==4?1200:700),F=(O.ez?.6:1)*(ngp?1.4:1)*(room==6?.75:1)*(room==4?1.35:1)*(fast||1);let sp=1.5*F;
- if(d<(room==4?260:190)&&!still&&!(t<(b.gr||0))){sp=2.4*F;b.wx=tx;b.wy=ty}else if(M.hypot(b.wx-b.x,b.wy-b.y)<24){b.wx=Math.random()*innerWidth;b.wy=Math.random()*innerHeight}
+function stage(n){room=n;find('r'+n);[door,fin,rm,r2,r3,r4,r5,r6,r7,r8,panel,nx].forEach(e=>e.hidden=1);$('#r'+n).hidden=0;sfx('door');tc(n);botE.hidden=n!=4&&n!=6;bot2E.hidden=n!=4;k4j=now+6000;botE.style.scale=n==6?2.2:1;if(ap){ap.forEach((q,i)=>q.frequency.setTargetAtTime([110,165,220][i]*[1,1,1,1,.8,1.25,.6,.9,1.1][n],ac.currentTime,.5));pg.gain.setTargetAtTime(O.snd?.02:0,ac.currentTime,1)}hideC=n==6?1e12:0;lmv=now;
+ bt={x:-50,y:innerHeight/2,wx:300,wy:300,cd:now+3500,hit(){}};bt2={x:innerWidth+50,y:innerHeight/2,wx:innerWidth-300,wy:300,cd:now+4000,hit(){bt.hit()}};
+ if(n==4)say('COLLECT 5 CORRUPTED KEYS. FREEZE TO EVADE PATROLS.',3800);
+ if(n==5)say('THE CHOIR: LISTEN TO THE SEQUENCE.',3200);
+ if(n==6)say('MIRROR REVERSAL. FIND THE ONE STEADY EXIT.',3600);
+ if(n==7)say('MATRIX OVERLOAD. INVERT NODES UNTIL ALL 9 ARE ACTIVE.',3600);
+ if(n==8)say('TEMPORAL REWIND. DRAG SLIDER TO ALIGN MEMORY FRAGMENTS.',3600);
+}
+function botStep(dt,t,b,e,fast){b=b||bt;e=e||botE;if(room==4&&cg4)return;const tx=room==6?innerWidth-mx:mx,ty=room==6?innerHeight-my:my,d=M.hypot(tx-b.x,ty-b.y),still=t-lmv>(room==4?1000:700),F=(O.ez?.6:1)*(ngp?1.4:1)*(room==6?.75:1)*(room==4?1.4:1)*(fast||1);let sp=1.6*F;
+ if(d<(room==4?340:220)&&!still&&!(t<(b.gr||0))){sp=2.8*F;b.wx=tx;b.wy=ty}else if(M.hypot(b.wx-b.x,b.wy-b.y)<24){b.wx=Math.random()*innerWidth;b.wy=Math.random()*innerHeight}
  const dx=b.wx-b.x,dy=b.wy-b.y,dd=M.hypot(dx,dy)||1;b.x+=dx/dd*sp*dt;b.y+=dy/dd*sp*dt;e.style.translate=`${b.x-17}px ${b.y-17}px`;
- if(d<(room==6?40:26)&&t>b.cd){b.cd=t+2500;b.hit()}}
+ if(d<(room==6?50:56)&&t>b.cd){b.cd=t+2500;b.hit()}}
 function rNf(t){cam.style.transform='';const dt=M.min(3,(t-(rNf.l||t))/16.7);rNf.l=t;if(room==4||room==6)botStep(dt,t);if(room==4){botStep(dt,t,bt2,bot2E,1.15);if(t>k4j&&!cg4){k4j=t+(O.ez?9000:6000);[...k4.children].forEach(k=>{if(!k.dataset.g){k.style.left=Math.random()*80+8+'vw';k.style.top=Math.random()*60+18+'vh'}})}}if(room==6){c6.style.translate=`${innerWidth-mx}px ${innerHeight-my}px`;c6b.style.translate=`${innerWidth-mx+170*M.sin(t/380)}px ${innerHeight-my+170*M.cos(t/470)}px`}}
 /* room 4: keys + patrol bot */
 function goR4(){stage(4);k4n=0;k4.innerHTML='';for(let i=0;i<5;i++){const k=document.createElement('i');k.className='key';k.textContent='◆';k.style.left=R()*80+8+'vw';k.style.top=R()*60+18+'vh';k4.append(k)}
  cg4=0;r4.classList.remove('cg');bt.hit=caught4}
 /* room 5: the choir (sequence + shuffling tiles) */
 const TN=[262,330,392,494],SY=['▲','●','■','◆'];
-function goR5(){stage(5);p5.innerHTML=SY.map((c,i)=>`<div class=pd data-i=${i}>${c}</div>`).join('');sq=[R()*4|0,R()*4|0];pi=0;busy=1;f5=0;setTimeout(play5,1400)}
+function goR5(){stage(5);p5.innerHTML=SY.map((c,i)=>`<div class=pd data-i=${i}>${c}</div>`).join('');sq=[R()*4|0,R()*4|0];pi=0;busy=1;f5=0;setTimeout(play5,3200)}
 function fl5(i,ms){const d=p5.children[i];if(!d)return;d.classList.add('on');tn(TN[i],.32,'sine',.15);setTimeout(()=>d.classList.remove('on'),ms)}
-function play5(){if(room!=5)return;busy=1;sq.forEach((v,i)=>setTimeout(()=>fl5(v,350),i*650));setTimeout(()=>busy=0,sq.length*650)}
-function press5(i){if(busy||room!=5)return;fl5(i,200);if(i!=sq[pi]){busy=1;tear();if(++f5>=(O.ez?3:4)){help5();return}say('WRONG.',1200);sq=[R()*4|0,R()*4|0];pi=0;setTimeout(play5,1600);return}
- if(++pi>=sq.length){pi=0;if(sq.length>=(O.ez?4:6)){busy=1;say('THE CHOIR IS SILENT.',2200);setTimeout(goR7,2400);return}sq.push(R()*4|0);const sh=[...SY].sort(()=>Math.random()-.5);[...p5.children].forEach((d,i)=>{d.style.order=Math.random()*4|0;d.textContent=sh[i]});busy=1;setTimeout(play5,1100)}}
+function play5(){if(room!=5)return;busy=1;say('LISTEN.',sq.length*650);sq.forEach((v,i)=>setTimeout(()=>fl5(v,350),i*650));setTimeout(()=>{busy=0;if(room==5)say('YOUR TURN.',1800)},sq.length*650)}
+function press5(i){if(busy||room!=5)return;fl5(i,200);if(i!=sq[pi]){busy=1;tear();if(++f5>=(O.ez?3:4)){help5();return}say('WRONG SEQUENCE.',1400);sq=[R()*4|0,R()*4|0];pi=0;setTimeout(play5,1800);return}
+ if(++pi>=sq.length){pi=0;if(sq.length>=(O.ez?4:6)){busy=1;say('THE CHOIR IS SILENT.',2200);setTimeout(goR7,2400);return}sq.push(R()*4|0);const sh=[...SY].sort(()=>Math.random()-.5);[...p5.children].forEach((d,i)=>{d.style.order=Math.random()*4|0;d.textContent=sh[i]});busy=1;say('NEXT PATTERN.',1200);setTimeout(play5,1400)}}
 /* room 6: reflection (inverted cursor, find the steady EXIT) */
 const scat6=()=>tg.forEach(e=>{e.style.left=Math.random()*78+6+'vw';e.style.top=Math.random()*55+22+'vh'});
 function goR6(){stage(6);[...r6.querySelectorAll('.t6')].forEach(e=>e.remove());tg=[];const x=R()*6|0;
