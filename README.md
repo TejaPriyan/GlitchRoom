@@ -7,7 +7,8 @@
 GLITCHROOM is an interactive horror-puzzle web experience in which the website itself is the character. It starts as a calm, minimal page. The more you interact, the more unstable it becomes, until the interface collapses and reveals a hidden series of rooms.
 
 **Created by [Teja Priyan](https://github.com/TejaPriyan)**  
-**🎮 Play Live:** [https://tejapriyan.github.io/GlitchRoom/](https://tejapriyan.github.io/GlitchRoom/)
+**🎮 Play Live:** [https://glitchroom.vercel.app/](https://glitchroom.vercel.app/)  
+*(Mirror: [https://tejapriyan.github.io/GlitchRoom/](https://tejapriyan.github.io/GlitchRoom/))*
 
 ---
 
