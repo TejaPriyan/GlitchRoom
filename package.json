@@ -1,0 +1,9 @@
+{
+  "name": "glitchroom",
+  "version": "1.0.0",
+  "description": "An interactive horror-puzzle web experience where the website is the character.",
+  "private": true,
+  "license": "MIT",
+  "author": "Teja Priyan",
+  "scripts": { "start": "npx serve ." }
+}
