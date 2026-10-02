@@ -249,7 +249,7 @@ function r3f(t){cam.style.transform='';const W=innerWidth,H=innerHeight,dt=M.min
   if(t>hb){sfx('beat');if(coarse&&d<250&&!O.rm&&navigator.vibrate)navigator.vibrate(20);hb=t+cl(d*1.3,260,1200)}
   if(!hint3&&t-t3>12000){hint3=1;say('WHEN YOU STOP, IT STOPS.',3500)}
   if(!nr3&&d<340&&!grace){nr3=1;say("DON'T MOVE. IT IS NEAR.",2200)}
-  if(d<68&&!grace)catch3();else if(stT>=(O.ez?4200:6500))win3()}
+  if(d<24&&!grace)catch3();else if(stT>=(O.ez?4200:6500))win3()}
  dkE.style.setProperty('--cx',mx+'px');dkE.style.setProperty('--cy',my+'px');dkE.style.setProperty('--vr',cl(50+d*.25,60,220)+'px');
  obE.style.translate=`${ob.x-32}px ${ob.y-10}px`;obE.style.scale=O.rm?1:1+cl(1-d/700,0,1)*2.2;
  let i=0;for(const e of eyesE.children){const ex=e._x*W+15,ey=e._y*H+8,a=M.atan2(my-ey,mx-ex);e.firstChild.style.translate=`${M.cos(a)*7}px ${M.sin(a)*3}px`;if(!e._d&&M.hypot(mx-ex,my-ey)<26){e._d=1;e.style.opacity=.2;say(EM[i%8],2200);find('eye')}i++}}
@@ -277,10 +277,9 @@ function stage(n){room=n;find('r'+n);[door,fin,rm,r2,r3,r4,r5,r6,r7,r8,panel,nx]
  if(n==7)say('MATRIX OVERLOAD. INVERT NODES UNTIL ALL 9 ARE ACTIVE.',3600);
  if(n==8)say('TEMPORAL REWIND. DRAG SLIDER TO ALIGN MEMORY FRAGMENTS.',3600);
 }
-function botStep(dt,t,b,e,fast){b=b||bt;e=e||botE;if(room==4&&cg4)return;const tx=room==6?innerWidth-mx:mx,ty=room==6?innerHeight-my:my,d=M.hypot(tx-b.x,ty-b.y),still=t-lmv>(room==4?1000:700),F=(O.ez?.6:1)*(ngp?1.4:1)*(room==6?.75:1)*(room==4?1.4:1)*(fast||1);let sp=1.6*F;
- if(d<(room==4?340:220)&&!still&&!(t<(b.gr||0))){sp=2.8*F;b.wx=tx;b.wy=ty}else if(M.hypot(b.wx-b.x,b.wy-b.y)<24){b.wx=Math.random()*innerWidth;b.wy=Math.random()*innerHeight}
- const dx=b.wx-b.x,dy=b.wy-b.y,dd=M.hypot(dx,dy)||1;b.x+=dx/dd*sp*dt;b.y+=dy/dd*sp*dt;e.style.translate=`${b.x-17}px ${b.y-17}px`;
- if(d<(room==6?50:56)&&t>b.cd){b.cd=t+2500;b.hit()}}
+function botStep(dt,t,b,e,fast){b=b||bt;e=e||botE;if(room==4&&cg4)return;const tx=room==6?innerWidth-mx:mx,ty=room==6?innerHeight-my:my,dx=tx-b.x,dy=ty-b.y,d=M.hypot(dx,dy)||1;const F=(O.ez?.7:1)*(ngp?1.3:1)*(room==6?.8:1)*(fast||1),sp=(room==4?1.7:1.4)*F;
+ b.x+=dx/d*sp*dt;b.y+=dy/d*sp*dt;e.style.translate=`${b.x-17}px ${b.y-17}px`;
+ if(d<(room==6?26:21)&&t>b.cd){b.cd=t+2500;b.hit()}}
 function rNf(t){cam.style.transform='';const dt=M.min(3,(t-(rNf.l||t))/16.7);rNf.l=t;if(room==4||room==6)botStep(dt,t);if(room==4){botStep(dt,t,bt2,bot2E,1.15);if(t>k4j&&!cg4){k4j=t+(O.ez?9000:6000);[...k4.children].forEach(k=>{if(!k.dataset.g){k.style.left=Math.random()*80+8+'vw';k.style.top=Math.random()*60+18+'vh'}})}}if(room==6){c6.style.translate=`${innerWidth-mx}px ${innerHeight-my}px`;c6b.style.translate=`${innerWidth-mx+170*M.sin(t/380)}px ${innerHeight-my+170*M.cos(t/470)}px`}}
 /* room 4: keys + patrol bot */
 function goR4(){stage(4);k4n=0;k4.innerHTML='';for(let i=0;i<5;i++){const k=document.createElement('i');k.className='key';k.textContent='◆';k.style.left=R()*80+8+'vw';k.style.top=R()*60+18+'vh';k4.append(k)}
