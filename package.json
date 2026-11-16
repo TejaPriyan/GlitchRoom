@@ -6,5 +6,8 @@
   "license": "MIT",
   "author": "Teja Priyan",
   "homepage": "https://glitchroom.vercel.app/",
-  "scripts": { "start": "npx serve ." }
+  "scripts": {
+    "start": "npx serve .",
+    "test": "node --test tests/smoke.test.mjs"
+  }
 }
